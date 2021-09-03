@@ -25,8 +25,8 @@ export default {
       loading: false,
       data: null,
       error: null,
-      treeDisplayData: [
-        {
+      treeDisplayData: [],
+      /*{
           text: "root 1",
           state: { checked: false, selected: false, expanded: false },
           id: 1,
@@ -61,7 +61,7 @@ export default {
           state: { checked: false, selected: false, expanded: false },
           id: 2,
         },
-      ],
+      ],*/
     };
   },
   computed: {
@@ -160,6 +160,13 @@ export default {
     this.$refs["my-tree"].expandNode(1);
     this.fetchData();
   },
+
+  watch: {
+    data(newData) {
+      this.treeDisplayData = this.newTree(newData);
+    },
+  },
+
   methods: {
     fetchData() {
       this.error = this.data = null;
@@ -169,12 +176,52 @@ export default {
         .then((response) => {
           this.loading = false;
           this.data = response.data;
-          console.log(this.data);
+
+          //this.treeDisplayData = newTree(response.data);
         })
         .catch((error) => {
           this.loading = false;
           this.error = error.response.data.message || error.message;
         });
+    },
+    newTree(data) {
+      let objectData = [];
+
+      for (let i = 1; i < data.length; i++) {
+        if (data[i][3] == "0") {
+          let newObject = {
+            id: data[i][0],
+            text: data[i][1],
+            definition: data[i][2],
+            state: { checked: false, selected: false, expanded: false },
+            readonly: data[i][3],
+            nodes: [],
+          };
+          objectData.push(newObject);
+        } else {
+          this.dfs(objectData, data[i]);
+        }
+      }
+
+      return objectData;
+    },
+    dfs(objectData, data) {
+      for (let i = 0; i < objectData.length; i++) {
+        if (objectData[i].id == data[3]) {
+          let newObject = {
+            id: data[0],
+            text: data[1],
+            definition: data[2],
+            state: { checked: false, selected: false, expanded: false },
+            readonly: data[3],
+            nodes: [],
+          };
+          objectData[i].nodes.push(newObject);
+          return;
+        } else {
+          this.dfs(objectData[i].nodes, data);
+        }
+      }
     },
     myCheckedFunction: function (nodeId, state) {
       console.log(`is ${nodeId} checked ? ${state}`);

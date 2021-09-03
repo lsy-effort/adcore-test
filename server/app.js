@@ -38,6 +38,7 @@ const init = async () => {
             .on('error', error => console.log(error))
             .on('data', row => row.length > 0 && result.push(row))
         await finished(rs)
+
         return result
     }
 
