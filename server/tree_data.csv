@@ -13,7 +13,6 @@ id	name	description	parent	read_only
 12	Node 7	node description 7	7	0
 13	Node 8	node description 8	1	0
 14	Node 9	node description 9	2	0
-15	Node 10	node description 10	3	0
 16	Node 11	node description 11	5	0
 17	Node 12	node description 12	6	0
 18	Node 13	node description 13	7	0
@@ -26,12 +25,6 @@ id	name	description	parent	read_only
 25	Node 20	node description 20	7	0
 26	Node 21	node description 21	20	1
 27	Node 22	node description 22	21	0
-28	Node 23	node description 23	27	0
 29	Node 24	node description 24	27	1
-30	Node 25	node description 25	1	0
-31	abc	123	0	1
-32			0	0
-33	abc	123	0	0
-34	abc	123	0	0
-35			0	0
-36	abc	123	0	0
+30	abc	123	10	0
+31	abc	123	0	0

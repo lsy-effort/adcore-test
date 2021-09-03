@@ -11,8 +11,15 @@
       <label for="Desc" class="required"> Description:</label>
       <input v-model="desc" id="desc" name="Desc" required />
       <label for="Parent"> ParentID:</label>
-      <input v-model="parent" id="parent" name="Parent" class="border" />
-      <label for="RO"> Read-Oonly:</label>
+      <select v-model="parent">
+        <option disabled value="">Please select one id</option>
+        <option value="0">0</option>
+        <option v-if="nodes" v-for="option in nodes.slice(1)">
+          {{ option[0] }}
+        </option>
+      </select>
+
+      <label for="RO"> Read-Only:</label>
       <input
         type="checkbox"
         v-model="ronly"
@@ -35,14 +42,16 @@ export default {
     return {
       name: "",
       desc: "",
-      parent: "0",
+      parent: "",
       ronly: "0",
       error: null,
     };
   },
+  props: ["nodes"],
+  emits: ["createNode"],
   methods: {
     onSubmit() {
-      this.errors = {};
+      this.error = {};
       axios
         .post("http://localhost:3001/createNode", {
           name: this.name,
@@ -51,9 +60,17 @@ export default {
           ronly: this.ronly,
         })
         .then((response) => {
+          console.log("parent", this.parent);
           response.data >= 0
             ? alert("Successly created node with id " + response.data)
             : alert("Meet Error!");
+          this.$emit("createNode", [
+            response.data,
+            this.name,
+            this.desc,
+            this.parent,
+            this.ronly,
+          ]);
         })
         .catch((error) => {
           console.log(error);

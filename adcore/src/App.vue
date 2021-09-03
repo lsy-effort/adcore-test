@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <TreeExample />
-    <CreateNode />
   </div>
 </template>
 
