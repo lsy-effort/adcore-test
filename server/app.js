@@ -60,6 +60,46 @@ const init = async () => {
         }
     });
 
+    server.route({
+        method: 'POST',
+        path: '/createNode',
+        handler: async (request, h) => {
+            let json_data = await readCSV();
+            let length = json_data.length;
+            let data = request.payload;
+            for (let i = 1; i < length; i++) {
+                if (data.parent == '0' || json_data[i][0] == data.parent) {
+                    let id = parseInt(json_data[length - 1][0]) + 1;
+                    let newNode = [id.toString(), ...Object.values(data)];
+                    json_data.push(newNode);
+                    writeToCSV(json_data);
+                    return id;
+
+                }
+            }
+            return "error";
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/updateNode',
+        handler: async (request, h) => {
+            let json_data = await readCSV();
+            let length = json_data.length;
+            let data = request.payload;
+            for (let i = 1; i < length; i++) {
+                if (json_data[i][0] == data.id) {
+                    json_data[i][1] = data.name;
+                    writeToCSV(json_data);
+                    return "success";
+
+                }
+            }
+            return "error";
+        }
+    });
+
     await server.start();
     console.log('Server running on %s', server.info.uri);
 }

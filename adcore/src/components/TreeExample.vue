@@ -142,14 +142,14 @@ export default {
           },
         },
         addNode: {
-          state: true,
-          fn: this.addNodeFunction,
+          state: false,
+          fn: this.createNode,
           appearOnHover: false,
         },
-        editNode: { state: false, fn: null, appearOnHover: false },
+        editNode: { state: true, fn: this.updateNode, appearOnHover: false },
         deleteNode: {
           state: true,
-          fn: this.deleteNodeFunction,
+          fn: this.deleteNode,
           appearOnHover: true,
         },
         showTags: true,
@@ -232,7 +232,10 @@ export default {
       console.log(`is ${nodeId} selected ? ${state}`);
       console.log(this.$refs["my-tree"].getSelectedNode());
     },
-    deleteNodeFunction: function (node) {
+    updateNode: function (node) {
+      console.log("update");
+    },
+    deleteNode: function (node) {
       const nodePath = this.$refs["my-tree"].findNodePath(node.id);
       const parentNodeId = nodePath.slice(-2, -1)[0];
       if (parentNodeId === undefined) {
@@ -249,12 +252,19 @@ export default {
       }
       console.log("example: remove node", node.id);
     },
-    addNodeFunction: function (node) {
+    /*
+    createNode: function (node) {
       const newNode = {
-        text: "Grandchild 2",
-        id: Math.floor(Math.random() * 100),
+        text: data[i][1],
+        definition: data[i][2],
+        state: { checked: false, selected: false, expanded: false },
+        readonly: data[i][3],
+        parent: node.id,
+
+        nodes: [],
       };
-      console.log("example: add node", newNode);
+
+      console.log("example: create node", newNode);
       if (node.nodes === undefined) {
         // the node doesn't have childs
         // I use $set to ensure that VueJs detect the change
@@ -263,6 +273,16 @@ export default {
         node.nodes.push(newNode);
       }
     },
+    */
   },
 };
 </script>
+
+<style>
+.folder_icon:before {
+  content: "📁" !important;
+}
+.folder_icon_active:before {
+  content: "📂" !important;
+}
+</style>

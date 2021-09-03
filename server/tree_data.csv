@@ -29,3 +29,9 @@ id	name	description	parent	read_only
 28	Node 23	node description 23	27	0
 29	Node 24	node description 24	27	1
 30	Node 25	node description 25	1	0
+31	abc	123	0	1
+32			0	0
+33	abc	123	0	0
+34	abc	123	0	0
+35			0	0
+36	abc	123	0	0

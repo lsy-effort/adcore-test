@@ -1,16 +1,19 @@
 <template>
   <div id="app">
     <TreeExample />
+    <CreateNode />
   </div>
 </template>
 
 <script>
 import TreeExample from "./components/TreeExample.vue";
+import CreateNode from "./components/CreateNode.vue";
 
 export default {
   name: "App",
   components: {
     TreeExample,
+    CreateNode,
   },
 };
 </script>
