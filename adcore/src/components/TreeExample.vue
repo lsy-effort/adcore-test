@@ -34,6 +34,8 @@ import CreateNode from "./CreateNode.vue";
 import UpdateNode from "./UpdateNode.vue";
 import axios from "axios";
 
+axios.defaults.baseURL = "https://18.117.251.160:3001";
+
 export default {
   name: "TreeExample",
   components: {
@@ -70,7 +72,7 @@ export default {
       this.error = this.data = null;
       this.loading = true;
       axios
-        .get("http://localhost:3001/get")
+        .get("/get")
         .then((response) => {
           this.loading = false;
           this.data = response.data;
@@ -171,7 +173,7 @@ export default {
       }
       //Update node in backend server
       axios
-        .post("http://localhost:3001/updateNode", {
+        .post("/updateNode", {
           id: this.updateId,
           name: name,
         })
@@ -217,7 +219,7 @@ export default {
         //Delete the node from csv in server;
 
         axios
-          .post("http://localhost:3001/deleteNode", {
+          .post("/deleteNode", {
             id: node.id,
           })
           .then((response) => {
@@ -250,7 +252,7 @@ export default {
     download: function () {
       //https://stackoverflow.com/questions/58292771/downloading-a-csv-of-file-using-vue-and-js
       axios
-        .get("http://localhost:3001/download")
+        .get("/download")
         .then((response) => {
           const anchor = document.createElement("a");
           anchor.href =

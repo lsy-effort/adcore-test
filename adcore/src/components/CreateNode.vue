@@ -36,6 +36,9 @@
 
 <script>
 import axios from "axios";
+
+axios.defaults.baseURL = "https://18.117.251.160:3001";
+
 export default {
   name: "CreateNode",
   data: function () {
@@ -53,7 +56,7 @@ export default {
     onSubmit() {
       this.error = {};
       axios
-        .post("http://localhost:3001/createNode", {
+        .post("/createNode", {
           name: this.name,
           description: this.desc,
           parent: this.parent,
