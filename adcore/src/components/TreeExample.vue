@@ -185,6 +185,7 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+      this.updateShow = false;
     },
     deleteNode: function (node) {
       if (node.readonly > 0) {
