@@ -29,7 +29,7 @@
         name="RO"
         class="border"
       />
-      <button type="submit">Create Node</button>
+      <button type="submit">Submit</button>
     </form>
   </div>
 </template>

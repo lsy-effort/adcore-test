@@ -50,13 +50,16 @@ const init = async () => {
         }
     });
 
+    await server.register(require('@hapi/inert'));
+
     server.route({
         method: 'GET',
-        path: '/update',
+        path: '/download',
         handler: async (request, h) => {
-            let json_data = await readCSV();
-            // ....json_data...
-            return writeToCSV(json_data)
+            return h.file(filename, {
+                mode: 'attachment',
+            });
+
         }
     });
 

@@ -1,6 +1,16 @@
 <template>
-  <div>
-    test
+  <div style="background-color: #c5cbe3">
+    <h1 style="background-color: DodgerBlue; color: white; margin: 0">
+      The tree
+    </h1>
+
+    <p>
+      Click the triangle to expand or collapse the tree. Click 'pen' icon to
+      edit or cancel editing the name of the node. Click 'x' icon to delete the
+      node and its children nodes. Some nodes are read-only and cannot be
+      updated or deleted.
+    </p>
+
     <Tree
       id="my-tree-id"
       ref="my-tree"
@@ -8,13 +18,20 @@
       :custom-styles="myCustomStyles"
       :nodes="treeDisplayData"
     ></Tree>
-    <CreateNode :nodes="data" @create-Node="createNode" />
+
+    <CreateNode v-if="createShow" :nodes="data" @create-Node="createNode" />
+    <UpdateNode v-if="updateShow" @update-Node="updateNodeName" />
+    <button id="showCreate" type="submit" @click="showCreate">
+      Create new node
+    </button>
+    <button type="submit" @click="download">Download CSV file</button>
   </div>
 </template>
 
 <script>
 import Tree from "vuejs-tree";
 import CreateNode from "./CreateNode.vue";
+import UpdateNode from "./UpdateNode.vue";
 import axios from "axios";
 
 export default {
@@ -22,12 +39,16 @@ export default {
   components: {
     Tree,
     CreateNode,
+    UpdateNode,
   },
   data: function () {
     return {
       loading: false,
       data: null,
       error: null,
+      updateId: null,
+      updateShow: false,
+      createShow: false,
       treeDisplayData: [],
     };
   },
@@ -73,6 +94,7 @@ export default {
             id: data[i][0],
             text: data[i][1],
             definition: data[i][2],
+            checkable: false,
             state: { checked: false, selected: false, expanded: false },
             readonly: data[i][4],
             nodes: [],
@@ -91,6 +113,7 @@ export default {
           let newObject = {
             id: data[0],
             text: data[1],
+            checkable: false,
             definition: data[2],
             state: { checked: false, selected: false, expanded: false },
             readonly: data[4],
@@ -113,7 +136,53 @@ export default {
       console.log(this.$refs["my-tree"].getSelectedNode());
     },
     updateNode: function (node) {
-      node.console.log("example: update node", node.id);
+      if (node.readonly > 0) {
+        alert("Sorry, this node is read-only!");
+        this.updateShow = false;
+      } else {
+        if (this.updateId == node.id && this.updateShow) {
+          this.updateShow = false;
+        } else {
+          this.updateShow = true;
+          this.updateId = node.id;
+        }
+      }
+    },
+
+    showCreate: function () {
+      if (this.createShow == false) {
+        //console.log()
+        document.getElementById("showCreate").innerHTML = "Cancel";
+        this.createShow = true;
+      } else {
+        document.getElementById("showCreate").innerHTML = "Create new node";
+        this.createShow = false;
+      }
+    },
+    updateNodeName: function (name) {
+      //Update node in the tree
+      const node = this.$refs["my-tree"].findNode(this.updateId);
+      node.text = name;
+      //Update node in data
+      for (let i = 0; i < this.data.length; i++) {
+        if (this.data[i][0] == this.updateId) {
+          this.data[i][1] = name;
+        }
+      }
+      //Update node in backend server
+      axios
+        .post("http://localhost:3001/updateNode", {
+          id: this.updateId,
+          name: name,
+        })
+        .then((response) => {
+          response.data == "success"
+            ? alert("Successly update the node.")
+            : alert("Meet Error!");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     deleteNode: function (node) {
       if (node.readonly > 0) {
@@ -167,38 +236,32 @@ export default {
       const newNode = {
         id: node[0],
         text: node[1],
+        checkable: false,
         definition: node[2],
         state: { checked: false, selected: false, expanded: false },
         readonly: node[4],
         nodes: [],
       };
 
-      //add node to tree
-      /*
-      if (parent == "0") {
-        console.log(this.$refs["my-tree"]);
-        this.$refs["my-tree"].push(newNode);
-      } else {
-        const parentNode = this.$refs["my-tree"].findNode(parent);
-        parentNode.nodes.push(newNode);
-      }
-      */
-
-      //add node to data
       this.data.push(node);
-      // this.data = JSON.parse(JSON.stringify(this.data.push(node)));
       this.data = JSON.parse(JSON.stringify(this.data));
-      /*
+    },
 
-      console.log("example: create node", newNode);
-      if (node.nodes === undefined) {
-        // the node doesn't have childs
-        // I use $set to ensure that VueJs detect the change
-        this.$set(node, "nodes", [newNode]);
-      } else {
-        node.nodes.push(newNode);
-      }
-      */
+    download: function () {
+      //https://stackoverflow.com/questions/58292771/downloading-a-csv-of-file-using-vue-and-js
+      axios
+        .get("http://localhost:3001/download")
+        .then((response) => {
+          const anchor = document.createElement("a");
+          anchor.href =
+            "data:text/csv;charset=utf-8," + encodeURIComponent(response.data);
+          anchor.target = "_blank";
+          anchor.download = "tree_data.csv";
+          anchor.click();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
   computed: {
@@ -259,7 +322,7 @@ export default {
             fn: this.mySelectedFunction,
           },
           checked: {
-            state: true,
+            state: false,
             fn: this.myCheckedFunction,
           },
         },
@@ -298,7 +361,7 @@ export default {
 
 <style>
 .folder_icon:before {
-  content: "📁" !important;
+  content: "📂" !important;
 }
 .folder_icon_active:before {
   content: "📂" !important;
