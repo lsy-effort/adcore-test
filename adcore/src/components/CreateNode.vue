@@ -37,7 +37,7 @@
 <script>
 import axios from "axios";
 
-axios.defaults.baseURL = "https://18.117.251.160:3001";
+axios.defaults.baseURL = "http://18.117.251.160:3001";
 
 export default {
   name: "CreateNode",
