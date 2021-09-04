@@ -137,6 +137,16 @@ export default {
       console.log(`is ${nodeId} selected ? ${state}`);
       console.log(this.$refs["my-tree"].getSelectedNode());
     },
+    showCreate: function () {
+      if (this.createShow == false) {
+        //console.log()
+        document.getElementById("showCreate").innerHTML = "Cancel";
+        this.createShow = true;
+      } else {
+        document.getElementById("showCreate").innerHTML = "Create new node";
+        this.createShow = false;
+      }
+    },
     updateNode: function (node) {
       if (node.readonly > 0) {
         alert("Sorry, this node is read-only!");
@@ -151,16 +161,6 @@ export default {
       }
     },
 
-    showCreate: function () {
-      if (this.createShow == false) {
-        //console.log()
-        document.getElementById("showCreate").innerHTML = "Cancel";
-        this.createShow = true;
-      } else {
-        document.getElementById("showCreate").innerHTML = "Create new node";
-        this.createShow = false;
-      }
-    },
     updateNodeName: function (name) {
       //Update node in the tree
       const node = this.$refs["my-tree"].findNode(this.updateId);

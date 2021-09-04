@@ -96,11 +96,12 @@ const init = async () => {
             for (let i = 1; i < length; i++) {
                 if (json_data[i][0] == data.id) {
                     json_data[i][1] = data.name;
-
+                    writeToCSV(json_data);
                     return "success";
 
                 }
             }
+            writeToCSV(json_data);
             return "error";
         }
     });
